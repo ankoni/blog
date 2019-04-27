@@ -1,0 +1,185 @@
+* {
+    box-sizing: border-box;
+}
+h1 {
+    text-align: center;
+}
+.profile_info {
+    position: absolute;
+}
+
+.container {
+    padding: 0 25% 0 25%;
+}
+@media (max-width: 360px) {
+    .container {
+        padding: 0;
+    }
+    .profile_info {
+        position: relative;
+    }
+}
+
+.records {
+    position: relative;
+    margin: 12px auto;
+    border-right: 1px solid #c58c8c;
+    border-radius: 0 10px 10px 0;
+}
+
+.records > .blog_title {
+    background: #c58c8c;;
+    padding: 4px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.records > .blog_date {
+    position: absolute;
+    font-size: 12px;
+    top: 6px;
+    right: 10px;
+}
+
+.records > .blog_text {
+    padding: 10px 15px;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.records > .author {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    font-size: 12px;
+    color: #67636f;
+}
+.records> .blog_text > .edit_time {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #adaddd;
+    font-style: italic;
+}
+
+.records_add {
+    display: block;
+    margin: 0 auto;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.btn_none {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-bottom: 5px;
+}
+
+/*registration, authorization*/
+
+.authorization, .registration {
+    width: 25%;
+    margin: 0 auto;
+    border: 1px solid silver;
+    text-align: center;
+    padding-top: 5px;
+}
+.authorization > button,
+.registration > button {
+    display: block;
+    margin: 5px auto;
+}
+.authorization > input,
+.registration > input {
+    width: 150px;
+    margin-bottom: 5px;
+}
+@media (max-width: 360px) {
+    .authorization, .registration {
+        width: 100%;
+        margin: 0 auto;
+        border: 1px solid silver;
+        text-align: center;
+        padding-top: 5px;
+    }
+    .authorization > button,
+    .registration > button {
+        display: block;
+        margin: 5px auto;
+    }
+    .authorization > input,
+    .registration > input {
+        width: 150px;
+        margin-bottom: 5px;
+    }
+}
+
+/*create blog post*/
+.input_blog {
+    margin: 0 auto;
+    width: 500px;
+    height: 150px;
+    border: 1px solid silver;
+    text-align: center;
+}
+
+.input_blog > input {
+    width: 350px;
+}
+
+.input_blog > textarea {
+    width: 358px;
+    height: 70px;
+}
+
+.input_blog > button {
+    display: block;
+    margin: 0 auto;
+}
+/*comments*/
+.commentRecord {
+    border: 1px solid #dababa;
+    position: relative;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.commentRecord > .comment_date {
+    position: absolute;
+    font-style: italic;
+    font-size: 12px;
+    color: #8d8d8d;
+    top: 5px;
+    right: 10px;
+}
+
+.commentRecord > .textComment {
+    padding: 5px 15px;
+}
+
+.commentRecord > .nameComment {
+    background-color: #dababa;
+    padding: 5px 25px;
+    font-style: italic;
+}
+/*add comment*/
+.add_comment {
+    margin-top: 10px;
+    width: 100%;
+    padding: 5px 3px;
+}
+
+.add_comment > input {
+    width: 100%;
+}
+.add_comment > textarea {
+    width: 100%;
+}
+.add_comment > button {
+    display: block;
+    margin: 0 auto;
+}
