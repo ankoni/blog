@@ -11,7 +11,7 @@ h1 {
 .container {
     padding: 0 25% 0 25%;
 }
-@media (max-width: 360px) {
+@media (min-width: 360px) and (max-width: 1000px) {
     .container {
         padding: 0;
     }
@@ -28,8 +28,8 @@ h1 {
 }
 
 .records > .blog_title {
-    background: #c58c8c;;
-    padding: 4px 20px;
+    padding: 4px 105px 4px 20px;
+    background: #c58c8c;
     font-weight: bold;
     border-radius: 10px;
 }

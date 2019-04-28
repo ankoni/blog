@@ -36,7 +36,7 @@ class WorkDB
     //request get records descending
     public function getRecords($bool) {
         try {
-            $command = 'SELECT * FROM '. $this->dbTableName. ' ORDER BY date';
+            $command = sprintf("SELECT * FROM %s ORDER BY date", $this->dbTableName);
             // Get all records
             if ($bool === 'true') {
                 $sth = $this->connection->prepare($command);
@@ -65,7 +65,7 @@ class WorkDB
     public function getComments($id) {
         try {
             $com = $this->connection->prepare('SELECT * FROM comments WHERE recordId = '. $id
-                . ' ORDER BY dateComment DESC');
+                                                                        . ' ORDER BY dateComment DESC');
             $com->execute();
             return $com->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -77,7 +77,7 @@ class WorkDB
     public function countComments($id) {
         try {
             $count = $this->connection->prepare('SELECT count(comment) FROM comments WHERE recordId = '
-                .$id);
+                                                                                                         .$id);
             $count->execute();
             return $count->fetchColumn();
         } catch (PDOException $e) {
@@ -88,8 +88,8 @@ class WorkDB
     //request insert record
     public function insertRecord($title, $description, $dateBlog, $author) {
         try {
-            $stmt = $this->connection->prepare('INSERT INTO Records (title, description, date, author) 
-VALUES (:title, :description, :dateBlog, :author)');
+            $stmt = $this->connection->prepare('INSERT INTO ' .$this->dbTableName
+               . ' (title, description, date, author) VALUES (:title, :description, :dateBlog, :author)');
             $stmt->bindParam(':title', $title);
             $stmt->bindParam(':description', $description);
             $stmt->bindParam(':dateBlog', $dateBlog);
@@ -104,7 +104,7 @@ VALUES (:title, :description, :dateBlog, :author)');
     public function insertComment($recordId, $name, $comment, $dateComment) {
         try {
             $com = $this->connection->prepare('INSERT INTO comments (recordId, name, comment, dateComment) 
-VALUES (:recordId, :name, :comment, :dateComment)');
+                                                                VALUES (:recordId, :name, :comment, :dateComment)');
             $com->bindParam(':recordId', $recordId);
             $com->bindParam(':name', $name);
             $com->bindParam(':comment', $comment);
@@ -119,10 +119,10 @@ VALUES (:recordId, :name, :comment, :dateComment)');
     public function checkAuthorization($login, $password) {
         try {
             $logining = $this->connection->prepare('SELECT password FROM users WHERE login = "'
-                . $login . '"');
+                                                                                        . $login . '"');
             $logining->execute();
             $logining = $logining->fetchColumn();
-            if ($logining == $password && $password == $logining) {
+            if ($logining == $password) {
                 $this->authorization = true;
             } else {
                 echo "Неправильный логин или пароль";
@@ -137,7 +137,7 @@ VALUES (:recordId, :name, :comment, :dateComment)');
         try {
             $description.='<div class="edit_time">Отредактировано: '. date("d/m/y H:i") . '</div>';
             $edit = $this->connection->prepare('UPDATE Records SET title = :title, description = 
-:description WHERE id = '.$id);
+                                                                            :description WHERE id = '.$id);
             $edit->bindParam(':title', $title);
             $edit->bindParam(':description', $description);
             $edit->execute();
@@ -149,7 +149,7 @@ VALUES (:recordId, :name, :comment, :dateComment)');
     public function registration($login, $password) {
         try {
             $reg = $this->connection->prepare('INSERT INTO users (login, password)
- VALUES (:login, :password)');
+                                                                VALUES (:login, :password)');
             $reg->bindParam(':login', $login);
             $reg->bindParam(':password', $password);
             $reg->execute();

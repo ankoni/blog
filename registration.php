@@ -31,9 +31,9 @@ if (isset($_POST['user_name'])) {
             <a href="index.php">Главная</a>
         </div>
             <form action="" class="registration" method="post">
-                <lable>Логин:</lable><br>
+                <label>Логин:</label><br>
                 <input type="text" name="user_name" id="user_name" placeholder="Логин" maxlength="25" required><br>
-                <lable>Пароль:</lable> <br>
+                <label>Пароль:</label> <br>
                 <input type="password" name="user_password" id="user_password" placeholder="Пароль" maxlength="10" required><br>
                 <button type="submit">Зарегистрироваться</button>
             </form>

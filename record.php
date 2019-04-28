@@ -18,6 +18,7 @@ if (isset($_GET['recordId'])) {
 //get record
 $record = $blog->getOneRecord($_GET['recordId']);
 
+//add comment
 if (isset($_POST['nameComment'])) {
         //data of comment
         $recordId = $_POST['recordId'];
@@ -25,7 +26,7 @@ if (isset($_POST['nameComment'])) {
         $comment = $_POST['newComment'];
         $dateComment = $_POST['dateComment'];
         $blog->insertComment($recordId, $nameComment, $comment, $dateComment);
-        header("Location:record.php?recordId=".$_GET['recordId']);
+        header("Location:record.php?recordId=".$_GET['recordId']); //return to post
 }
 
 ?>
@@ -91,8 +92,12 @@ if (isset($_POST['nameComment'])) {
     }
     //get comments
     $comment = $blog->getComments($_GET['recordId']);?>
-    <label for="commentRecord">Комментарии:</label>
-    <?php foreach ($comment as $row) {?>
+    <label for="commentRecord">Комментарии (<?php echo $blog->countComments($record['id']); ?>):</label>
+    <?php
+    if ($comment == NULL) {
+        echo "<center>Пока никто не оставил комментария.</center>";
+    }
+    foreach ($comment as $row) {?>
         <div class="commentRecord">
             <div class="nameComment"><?php echo $row['name'];?></div>
             <span class="comment_date"><?php

@@ -29,7 +29,7 @@ if(isset($_SESSION['user'])) { ?>
     <div class="profile_info">
         <?php echo ' Вы зашли под: '.$_SESSION['user']; ?>
         <form action="post.php" method="post">
-            <input type="text" name="exit" value="<?=$_SERVER[REQUEST_URI]?>" hidden>
+            <input type="hidden" name="exit" value="<?=$_SERVER[REQUEST_URI]?>">
             <input type="submit" value="Выйти">
         </form>
     </div>
@@ -75,7 +75,8 @@ if(isset($_SESSION['user'])) { ?>
         <!-- form with count of comment to this record and redirects to page with record,
         all comment to this and add comment -->
         <form action="record.php" method="get">
-            <button class="btn_none" type="submit" name="recordId" value="<?=$record['id'];?>">Комментариев: <?php echo $blog->countComments($record['id']); ?></button>
+            <button class="btn_none" type="submit" name="recordId" value="<?=$record['id'];?>">Комментариев:
+                <?php echo $blog->countComments($record['id']); ?></button>
         </form>
     </div>
 </div>
