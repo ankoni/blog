@@ -2,6 +2,7 @@
 
 namespace task;
 
+use Exception;
 use PDO;
 use PDOException;
 
@@ -35,42 +36,32 @@ class WorkDB
 
     //request get records descending
     public function getRecords($bool) {
-        try {
-            $command = sprintf("SELECT *, (SELECT count(comments.recordId) FROM comments WHERE recordId=Records.id) AS amount  FROM %s ORDER BY date", $this->dbTableName);
-            // Get all records
-            if ($bool === 'true') {
-                $sth = $this->connection->prepare($command);
-            } else {
-                $command.= ' DESC';
-                $sth = $this->connection->prepare($command);
-            }
-            $sth->execute();
-            return $this->records = $sth->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
+
+        $command = sprintf("SELECT *, (SELECT count(comments.recordId) FROM comments WHERE recordId=Records.id) AS amount  FROM %s ORDER BY date", $this->dbTableName);
+        // Get all records
+        if ($bool == 'true') {
+            $sth = $this->connection->prepare($command);
+        } else {
+            $command.= ' DESC';
+            $sth = $this->connection->prepare($command);
         }
+        $sth->execute();
+
+        return $this->records = $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getOneRecord($id) {
-        try {
-            $command = 'SELECT *,  (SELECT count(comments.recordId) FROM comments WHERE recordId=Records.id) AS amount FROM '. $this->dbTableName. ' WHERE id = '. $id;
-            $sth = $this->connection->prepare($command);
-            $sth->execute();
-            return $this->blogPost = $sth->fetchAll(PDO::FETCH_NAMED);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+        $command = 'SELECT *,  (SELECT count(comments.recordId) FROM comments WHERE recordId=Records.id) AS amount FROM '. $this->dbTableName. ' WHERE id = '. $id;
+        $sth = $this->connection->prepare($command);
+        $sth->execute();
+        return $this->blogPost = $sth->fetch();
     }
 
     public function getComments($id) {
-        try {
-            $com = $this->connection->prepare('SELECT * FROM comments WHERE recordId = '. $id
-                                                                        . ' ORDER BY dateComment DESC');
-            $com->execute();
-            return $com->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+        $com = $this->connection->prepare('SELECT * FROM comments WHERE recordId = '. $id
+                                                                    . ' ORDER BY dateComment DESC');
+        $com->execute();
+        return $com->fetchAll(PDO::FETCH_ASSOC);
     }
 
     //request insert record
@@ -89,18 +80,40 @@ class WorkDB
     }
 
     //add comment
-    public function insertComment($recordId, $name, $comment, $dateComment) {
+    public function insertComment($recordId, $name, $comment) {
         try {
+            if(empty($name) || empty($comment)) {
+                throw new Exception('Пустые поля');
+            }
+
+            $nameRegexp = '/^[А-Я]{1}[а-яё]{1,23}|\s+$/su';
+            $commentRegexp = '/(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/';
+            if(!preg_match($nameRegexp, $name)) {
+                throw new Exception('Неправильное имя');
+            }
+
+            if(preg_match($commentRegexp, $comment)) {
+                throw new Exception('Обнаружена ссылка');
+            }
+
+            $dateComment = date('Y-m-d H:i:s');
             $com = $this->connection->prepare('INSERT INTO comments (recordId, `name`, comment, dateComment) 
-                                                                VALUES (:recordId, :name, :comment, :dateComment)');
+                                                        VALUES (:recordId, :name, :comment, :dateComment)');
             $com->bindParam(':recordId', $recordId);
             $com->bindParam(':name', $name);
             $com->bindParam(':comment', $comment);
             $com->bindParam(':dateComment', $dateComment);
             $com->execute();
-        } catch (PDOException $e) {
-            echo $e->getMessage();
+
+            if ('00000' != $com->errorCode()) {
+                throw new Exception('Ошибка SQL');
+            }
+
+            echo json_encode(['success' => 'success']);
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
         }
+
     }
 
     //authorization check

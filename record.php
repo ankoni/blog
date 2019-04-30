@@ -1,35 +1,19 @@
 <?php
+
 session_start();
 
 include_once 'include.php';
 
-//set recordId on reboot after commencement
-if (isset($_GET['recordId'])) {
-    $_SESSION['last_recordId'] = $_GET['recordId']; //memory id
-} else {
-    $_GET['recordId'] = $_SESSION['last_recordId']; //set last id
+$page = "record.php?recordId=".$_GET['recordId']; //direct to return
+
+//get record and comments
+try {
+    $record = $blog->getOneRecord($_GET['recordId']);
+    $comments = $blog->getComments($_GET['recordId']);
+} catch (PDOException $e) {
+    echo $e->getMessage();
 }
 
-//get record
-$record = $blog->getOneRecord($_GET['recordId']);
-$comment = $blog->getComments($_GET['recordId']);
-
-//add comment
-if (isset($_POST['nameComment'])) {
-        //data of comment
-        $recordId = $_POST['recordId'];
-        $nameComment = $_POST['nameComment'];
-        $comment = $_POST['newComment'];
-        $dateComment = $_POST['dateComment'];
-        //check on links
-    if (preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $nameComment) ||
-        preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $comment)) {
-        die('<script>alert("Ссылка");</script><a href="record.php?recordId='.$_GET['recordId'].'">Назад</a>');//not add comment
-    }
-
-    $blog->insertComment($recordId, $nameComment, $comment, $dateComment);
-    header("Location:record.php?recordId=".$_GET['recordId']); //return to post
-}
 
 ?>
 <!doctype html>
@@ -41,85 +25,74 @@ if (isset($_POST['nameComment'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Пост</title>
     <link rel="stylesheet" href="css/style.css">
+    <script
+            src="http://code.jquery.com/jquery-3.4.0.js"
+            integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo="
+            crossorigin="anonymous"></script>
+    <script src="main.js" type="text/javascript"></script>
 </head>
 <body>
 
-<?php if(isset($_SESSION['user'])) { ?>
 <div class="profile_info">
+<?php if(isset($_SESSION['user'])) { ?>
     <?php echo ' Вы зашли под: '.$_SESSION['user']; ?>
     <br><a href="index.php">Главная</a>
-    <form action="post.php" method="post">
-        <input type="text" name="exit" value="<?=$_SERVER[REQUEST_URI]?>" hidden>
-        <input type="submit" value="Выйти">
+    <form action="" method="post">
+        <input type="submit" name="exit_btn" id="exit_btn" value="Выйти">
     </form>
-</div>
 <?php
 } else { ?>
-    <div class="profile_info">
         <a href="index.php">Главная</a><br>
         <form action="addform.php" method="post">
-            <input type="text" name="entry" value="<?=$_SERVER[REQUEST_URI]?>" hidden>
-            <input type="submit" value="Вход">
+            <button type="submit" name="entry" value="<?=$page?>">Вход</button>
         </form>
-    </div>
 <?php
 }
 ?>
+</div>
+
 <div class="container">
-<?php
-    //get record
-    foreach ($record as $record) { ?>
-        <div class="records">
-            <div class="blog_title">
-                <?php echo $record['title']; ?>
-            </div>
-            <span class="blog_date">
-                <?php
-                $date = date_create($record['date']);
-                echo date_format($date, 'd/m/y H:i'); ?>
-            </span>
-            <div class="blog_text"><?php echo $record['description']; ?></div>
-            <div class="author"><?php echo $record['author']; ?></div>
-            <?php if ($_SESSION['user'] == $record['author']) {
-                ?>
-                <form action="edit.php" method="get">
-                    <input type="hidden" name="recordId" value="<?= $_GET['recordId']; ?>">
-                    <button class="btn_none" type="submit">Редактировать</button>
-                </form>
-                <?php
-            }
+    <div class="records">
+        <div class="blog_title">
+            <?php echo $record['title']; ?>
+        </div>
+        <span class="blog_date">
+            <?php
+            $date = date_create($record['date']);
+            echo date_format($date, 'd/m/y H:i'); ?>
+        </span>
+        <div class="blog_text"><?php echo $record['description']; ?></div>
+        <div class="author"><?php echo $record['author']; ?></div>
+        <?php if ($_SESSION['user'] == $record['author']) {
             ?>
-        </div>
-        <label for="commentRecord">Комментарии (<?php echo $record['amount']; ?>):</label>
-        <?php
-        if ($record['amount'] == []) {
-            echo "<center>Пока никто не оставил комментария.</center>";
+            <a href="edit.php?recordId=<?=$_GET['recordId']?>">Редактировать</a>
+        <?php } ?>
+    </div>
+    <label for="commentRecord">Комментарии (<?php echo $record['amount']; ?>):</label>
+    <div class="block_comment">
+            <?php
+            if ($record['amount'] == 0) {
+                echo "<center>Пока никто не оставил комментария.</center>";
+            }
+        foreach ($comments as $row) {?>
+            <div class="commentRecord">
+                <div class="nameComment"><?php echo $row['name'];?></div>
+                <span class="comment_date"><?php
+                    $date=date_create($row['dateComment']);
+                    echo date_format($date, 'd/m/y H:i');?></span>
+                <div class="textComment"><?php echo $row['comment'];?></div>
+            </div>
+            <?php
         }
-    }
-    foreach ($comment as $row) {?>
-        <div class="commentRecord">
-            <div class="nameComment"><?php echo $row['name'];?></div>
-            <span class="comment_date"><?php
-                $date=date_create($row['dateComment']);
-                echo date_format($date, 'd/m/y H:i');?></span>
-            <div class="textComment"><?php echo $row['comment'];?></div>
-        </div>
-    <?php
-    }
- ?>
+        ?>
+    </div>
+
     <form action="" method="post" class="add_comment" name="add_comments">
         <label for="add_comments">Добавить комментарий:</label>
-        <?php if(isset($_SESSION['user'])) {
-            ?>
-            <input type="hidden" name="nameComment" placeholder="Имя" value="<?=$_SESSION['user']?>">
-        <?php
-        } else { ?>
-        <input type="text" name="nameComment" placeholder="Имя" required><br>
-        <?php } ?>
-        <textarea name="newComment" placeholder="Комментарий" required></textarea>
-        <input type="hidden" name="dateComment" value="<?=date('Y-m-d, H:i:s'); ?>">
-        <input type="hidden" name="recordId" value="<?=$_GET['recordId']?>">
-        <button type="submit">Отправить</button>
+        <input type="text" name="nameComment" id="nameComment" placeholder="Имя"><br>
+        <textarea name="newComment" id="newComment" placeholder="Комментарий"></textarea>
+        <input type="hidden" name="recordId" id="recordId" value="<?=$_GET['recordId']?>">
+        <button type="submit" id="post_comment">Отправить</button>
     </form>
 </div>
 

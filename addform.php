@@ -28,31 +28,36 @@ if (isset($user)) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Добавление записи</title>
     <link rel="stylesheet" href="css/style.css">
+    <script
+            src="http://code.jquery.com/jquery-3.4.0.js"
+            integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo="
+            crossorigin="anonymous"></script>
+    <script src="main.js" type="text/javascript"></script>
 </head>
 <body>
+
 <?php
 if(isset($_SESSION['user'])) {?>
     <div class="profile_info">
         <?php echo ' Вы зашли под: '.$_SESSION['user']; ?>
         <br>
         <a href="index.php">Главная</a>
-        <form action="post.php" method="post">
-            <input type="text" name="exit" value="<?=$_SERVER[REQUEST_URI]?>" hidden>
-            <input type="submit" value="Выйти">
+        <form action="" method="post">
+            <input type="submit" name="exit_btn" id="exit_btn" value="Выйти">
         </form>
     </div>
+
 <div class="container">
 <!--    check try of authorization-->
-    <form method="post" action="post.php" class="input_blog">
+    <form method="post" action="" class="input_blog">
         <label>Название</label>
-        <input type="text" name="title" required />
+        <input type="text" name="title" id="title" required />
         <br />
         <label>Описание</label>
-        <textarea name="description" required></textarea>
-        <input type="hidden" name="date_blog" value="<?=date('Y-m-d, H:i:s'); ?>">
-        <input type="hidden" name="author" value="<?=$_SESSION['user']; ?>">
+        <textarea name="description" id="description" required></textarea>
+        <input type="hidden" name="author" id="author" value="<?=$_SESSION['user']; ?>">
         <br />
-        <button type="submit">Отправить</button>
+        <button type="submit" id="input_blog">Отправить</button>
     </form>
         <?php
         } else { ?>
