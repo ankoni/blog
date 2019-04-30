@@ -53,7 +53,7 @@ if(isset($_SESSION['user'])) { ?>
         echo '<button class="btn_none" type="submit" name="sort" value="false">Сортировать(по дате) &#8593;</button>';
     } else {
         echo '<button class="btn_none" type="submit" name="sort" value="true">Сортировать(по дате) &#8595;</button>';
-    }
+    } //make with ajax
     ?>
 </form>
 <!--show records-->
@@ -74,10 +74,7 @@ if(isset($_SESSION['user'])) { ?>
     <div class="comment">
         <!-- form with count of comment to this record and redirects to page with record,
         all comment to this and add comment -->
-        <form action="record.php" method="get">
-            <button class="btn_none" type="submit" name="recordId" value="<?=$record['id'];?>">Комментариев:
-                <?php echo $blog->countComments($record['id']); ?></button>
-        </form>
+        <a href="record.php?recordId=<?=$record['id']?>">Комментарев: <?php echo $blog->countComments($record['id']); ?></a>
     </div>
 </div>
 <?php } ?>
