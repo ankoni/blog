@@ -1,12 +1,7 @@
 <?php
 session_start();
-include ('WorkDB.php');
-use task\WorkDB;
 
-$config = parse_ini_file('config/config.ini');
-
-//connect to db
-$blog = new WorkDB($config);
+include_once 'include.php';
 
 if(isset($_POST['title'])) {
     $blog->editRecord($_POST['title'], $_POST['description'], $_GET['recordId']);

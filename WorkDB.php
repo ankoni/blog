@@ -73,23 +73,11 @@ class WorkDB
         }
     }
 
-    //get amount of comments
-    public function countComments($id) {
-        try {
-            $count = $this->connection->prepare('SELECT count(comment) FROM comments WHERE recordId = '
-                                                                                                         .$id);
-            $count->execute();
-            return $count->fetchColumn();
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
-    }
-
     //request insert record
     public function insertRecord($title, $description, $dateBlog, $author) {
         try {
             $stmt = $this->connection->prepare('INSERT INTO ' .$this->dbTableName
-               . ' (title, description, date, author) VALUES (:title, :description, :dateBlog, :author)');
+               . ' (title, description, `date`, author) VALUES (:title, :description, :dateBlog, :author)');
             $stmt->bindParam(':title', $title);
             $stmt->bindParam(':description', $description);
             $stmt->bindParam(':dateBlog', $dateBlog);
@@ -103,7 +91,7 @@ class WorkDB
     //add comment
     public function insertComment($recordId, $name, $comment, $dateComment) {
         try {
-            $com = $this->connection->prepare('INSERT INTO comments (recordId, name, comment, dateComment) 
+            $com = $this->connection->prepare('INSERT INTO comments (recordId, `name`, comment, dateComment) 
                                                                 VALUES (:recordId, :name, :comment, :dateComment)');
             $com->bindParam(':recordId', $recordId);
             $com->bindParam(':name', $name);

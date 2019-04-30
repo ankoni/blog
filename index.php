@@ -9,13 +9,7 @@
 <?php
 session_start();
 
-include ('WorkDB.php');
-use task\WorkDB;
-
-$config = parse_ini_file('config/config.ini'); //data of db
-
-//connect to db
-$blog = new WorkDB($config);
+include_once 'include.php';
 
 //sort by date
 if (isset($_POST['sort'])){

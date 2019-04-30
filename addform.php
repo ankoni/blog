@@ -1,11 +1,6 @@
 <?php
 session_start();
 
-include ('WorkDB.php');
-use task\WorkDB;
-
-$config = parse_ini_file('config/config.ini'); //data of db
-
 $user = $_POST['user_name'];
 $password = $_POST['user_password'];
 
@@ -16,9 +11,9 @@ if(isset($_POST['entry'])) {
 //check authorization
 if (isset($user)) {
     //connect
-    $blogAdd = new WorkDB($config);
-    $blogAdd->checkAuthorization($user, md5($password));
-    if($blogAdd->authorization) {
+    include_once 'include.php';
+    $blog->checkAuthorization($user, md5($password));
+    if($blog->authorization) {
         $_SESSION['user'] = $user;
         header("Location:".$_SESSION['lastPage']);
     }
@@ -78,5 +73,3 @@ if(isset($_SESSION['user'])) {?>
 </div>
 </body>
 </html>
-
-<!--валидация данных-->

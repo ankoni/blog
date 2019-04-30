@@ -1,12 +1,7 @@
 <?php
 session_start();
-include ('WorkDB.php');
-use task\WorkDB;
 
-$config = parse_ini_file('config/config.ini'); //data of db
-
-//connect to db
-$blog = new WorkDB($config);
+include_once 'include.php';
 
 if (isset($_POST['user_name'])) {
     $blog->registration($_POST['user_name'], md5($_POST['user_password']));
@@ -24,8 +19,8 @@ if (isset($_POST['user_name'])) {
     <title>Регистрация</title>
 </head>
 <body>
-    <?php if(!isset($_SESSION['user'])) {
-        ?>
+    <?php
+    if(!isset($_SESSION['user'])) { ?>
         <div class="profile_info">
             <a href="addform.php">Назад</a><br>
             <a href="index.php">Главная</a>

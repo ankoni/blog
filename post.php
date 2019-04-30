@@ -1,13 +1,7 @@
 <?php
 session_start();
 
-include ('WorkDB.php');
-use task\WorkDB;
-
-$config = parse_ini_file('config/config.ini');
-
-// connecting to database
-$insertBlog = new WorkDB($config);
+include_once 'include.php';
 
 //insert record
 if (isset($_POST['description'])) {
@@ -20,7 +14,7 @@ if (isset($_POST['description'])) {
     if (preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $title)) {
         die('<script>alert("Ссылка");</script><a href="addform.php">Назад</a>');//not add
     }
-    $insertBlog->insertRecord($title, $description, $dateBlog, $author);
+    $blog->insertRecord($title, $description, $dateBlog, $author);
 }
 ?>
 <!DOCTYPE html>
