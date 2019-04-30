@@ -72,9 +72,9 @@ if(isset($_SESSION['user'])) { ?>
     </div>
     <div class="author">By: <?php echo $record['author']; ?></div>
     <div class="comment">
-        <!-- form with count of comment to this record and redirects to page with record,
+        <!-- link with count of comment to this record and redirects to page with record,
         all comment to this and add comment -->
-        <a href="record.php?recordId=<?=$record['id']?>">Комментарев: <?php echo $blog->countComments($record['id']); ?></a>
+        <a href="record.php?recordId=<?=$record['id']?>">Комментарев: <?php echo $record['amount']; ?></a>
     </div>
 </div>
 <?php } ?>

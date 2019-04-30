@@ -36,7 +36,7 @@ class WorkDB
     //request get records descending
     public function getRecords($bool) {
         try {
-            $command = sprintf("SELECT * FROM %s ORDER BY date", $this->dbTableName);
+            $command = sprintf("SELECT *, (SELECT count(comments.recordId) FROM comments WHERE recordId=Records.id) AS amount  FROM %s ORDER BY date", $this->dbTableName);
             // Get all records
             if ($bool === 'true') {
                 $sth = $this->connection->prepare($command);
@@ -53,7 +53,7 @@ class WorkDB
 
     public function getOneRecord($id) {
         try {
-            $command = 'SELECT * FROM '. $this->dbTableName. ' WHERE id = '. $id;
+            $command = 'SELECT *,  (SELECT count(comments.recordId) FROM comments WHERE recordId=Records.id) AS amount FROM '. $this->dbTableName. ' WHERE id = '. $id;
             $sth = $this->connection->prepare($command);
             $sth->execute();
             return $this->blogPost = $sth->fetchAll(PDO::FETCH_NAMED);

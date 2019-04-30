@@ -17,6 +17,7 @@ if (isset($_GET['recordId'])) {
 
 //get record
 $record = $blog->getOneRecord($_GET['recordId']);
+$comment = $blog->getComments($_GET['recordId']);
 
 //add comment
 if (isset($_POST['nameComment'])) {
@@ -84,24 +85,21 @@ if (isset($_POST['nameComment'])) {
             </span>
             <div class="blog_text"><?php echo $record['description']; ?></div>
             <div class="author"><?php echo $record['author']; ?></div>
-            <?php if($_SESSION['user'] == $record['author']) {
+            <?php if ($_SESSION['user'] == $record['author']) {
                 ?>
                 <form action="edit.php" method="get">
-                    <input type="hidden" name="recordId" value="<?=$_GET['recordId'];?>">
+                    <input type="hidden" name="recordId" value="<?= $_GET['recordId']; ?>">
                     <button class="btn_none" type="submit">Редактировать</button>
                 </form>
                 <?php
             }
             ?>
         </div>
-<?php
-    }
-    //get comments
-    $comment = $blog->getComments($_GET['recordId']);?>
-    <label for="commentRecord">Комментарии (<?php echo $blog->countComments($record['id']); ?>):</label>
-    <?php
-    if ($comment == NULL) {
-        echo "<center>Пока никто не оставил комментария.</center>";
+        <label for="commentRecord">Комментарии (<?php echo $record['amount']; ?>):</label>
+        <?php
+        if ($record['amount'] == []) {
+            echo "<center>Пока никто не оставил комментария.</center>";
+        }
     }
     foreach ($comment as $row) {?>
         <div class="commentRecord">
