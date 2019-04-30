@@ -16,6 +16,10 @@ if (isset($_POST['description'])) {
     $description = $_POST['description'];
     $dateBlog = $_POST['date_blog'];
     $author = $_POST['author'];
+    //check on exist link
+    if (preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $title)) {
+        die('<script>alert("Ссылка");</script><a href="addform.php">Назад</a>');//not add
+    }
     $insertBlog->insertRecord($title, $description, $dateBlog, $author);
 }
 ?>

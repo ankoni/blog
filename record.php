@@ -25,8 +25,14 @@ if (isset($_POST['nameComment'])) {
         $nameComment = $_POST['nameComment'];
         $comment = $_POST['newComment'];
         $dateComment = $_POST['dateComment'];
-        $blog->insertComment($recordId, $nameComment, $comment, $dateComment);
-        header("Location:record.php?recordId=".$_GET['recordId']); //return to post
+        //check on links
+    if (preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $nameComment) ||
+        preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $comment)) {
+        die('<script>alert("Ссылка");</script><a href="record.php?recordId='.$_GET['recordId'].'">Назад</a>');//not add comment
+    }
+
+    $blog->insertComment($recordId, $nameComment, $comment, $dateComment);
+    header("Location:record.php?recordId=".$_GET['recordId']); //return to post
 }
 
 ?>
