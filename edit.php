@@ -3,7 +3,12 @@ session_start();
 
 include_once 'include.php';
 
-$record = $blog->getOneRecord($_GET['recordId']);
+try {
+    $record = $blog->getOneRecord($_GET['recordId']);
+} catch (PDOException $e) {
+    echo $e->getMessage();
+}
+
 
 ?>
 <!doctype html>

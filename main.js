@@ -6,7 +6,7 @@ $(document).ready(function () {
             data: {
                 recordId: $('#recordId').val(),
                 nameComment: $('#nameComment').val(),
-                newComment: $('#newComment').val()
+                newComment: $('#newComment').val(),
             },
             dataType: 'json',
             type: 'post',
@@ -16,12 +16,11 @@ $(document).ready(function () {
                     //err handling
                     alert(response.error);
                 } else {
-                    var time =new Date();
                     //success message
                     $('.block_comment').prepend("" +
                         "<div class=\"commentRecord\">" +
                         "<div class=\"nameComment\">"+$('#nameComment').val()+"</div>" +
-                        "<span class=\"comment_date\">" + time.getHours() + ":" + time.getMinutes() +"</span>" +
+                        "<span class=\"comment_date\">" + response.dateBlog +"</span>" +
                         "\<div class=\"textComment\">"+$('#newComment').val()+"</div>" +
                         "</div>");
 

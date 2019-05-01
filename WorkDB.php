@@ -80,40 +80,15 @@ class WorkDB
     }
 
     //add comment
-    public function insertComment($recordId, $name, $comment) {
-        try {
-            if(empty($name) || empty($comment)) {
-                throw new Exception('Пустые поля');
-            }
+    public function insertComment($recordId, $name, $comment, $dateComment) {
 
-            $nameRegexp = '/^[А-Я]{1}[а-яё]{1,23}|\s+$/su';
-            $commentRegexp = '/(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/';
-            if(!preg_match($nameRegexp, $name)) {
-                throw new Exception('Неправильное имя');
-            }
-
-            if(preg_match($commentRegexp, $comment)) {
-                throw new Exception('Обнаружена ссылка');
-            }
-
-            $dateComment = date('Y-m-d H:i:s');
-            $com = $this->connection->prepare('INSERT INTO comments (recordId, `name`, comment, dateComment) 
-                                                        VALUES (:recordId, :name, :comment, :dateComment)');
-            $com->bindParam(':recordId', $recordId);
-            $com->bindParam(':name', $name);
-            $com->bindParam(':comment', $comment);
-            $com->bindParam(':dateComment', $dateComment);
-            $com->execute();
-
-            if ('00000' != $com->errorCode()) {
-                throw new Exception('Ошибка SQL');
-            }
-
-            echo json_encode(['success' => 'success']);
-        } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
-        }
-
+        $com = $this->connection->prepare('INSERT INTO comments (recordId, `name`, comment, dateComment) 
+                                                    VALUES (:recordId, :name, :comment, :dateComment)');
+        $com->bindParam(':recordId', $recordId);
+        $com->bindParam(':name', $name);
+        $com->bindParam(':comment', $comment);
+        $com->bindParam(':dateComment', $dateComment);
+        $com->execute();
     }
 
     //authorization check

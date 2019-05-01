@@ -6,51 +6,60 @@ error_reporting(E_ALL);
 session_start();
 
 include_once 'include.php';
+try {
+    $dateBlog = date('Y/m/d H:i:s');
 
-if(isset($_POST['nameComment'])) {
+    if(isset($_POST['nameComment'])) {
         $recordId = $_POST['recordId'];
         $name = $_POST['nameComment'];
         $comment = $_POST['newComment'];
 
-        $blog->insertComment($recordId, $name, $comment);
-}
+        if(empty($name) || empty($comment)) {
+            throw new Exception('Пустые поля');
+        }
 
-if (isset($_POST['description'])) {
-    try {
-        //data of record
-        $title = $_POST['title'];
-        $description = $_POST['description'];
-        $dateBlog = date('Y-m-d, H:i:s');
-        $author = $_POST['author'];
-        //check on exist link
-        if (preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $title)) {
+        $nameRegexp = '/^[А-Я]{1}[а-яё]{1,23}|\s+$/su';
+        $commentRegexp = '/(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/';
+        if(!preg_match($nameRegexp, $name)) {
+            throw new Exception('Неправильное имя');
+        }
+
+        if(preg_match($commentRegexp, $comment)) {
             throw new Exception('Обнаружена ссылка');
         }
-        $blog->insertRecord($title, $description, $dateBlog, $author);
 
-        echo json_encode(['success' => 'success']);
-    } catch (Exception $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        $blog->insertComment($recordId, $name, $comment, $dateBlog);
+
+       /* if ('00000' != $blog->insertComment->errorCode()) {
+            throw new Exception('Ошибка SQL');
+        }*/
+
     }
 
-}
+    if (isset($_POST['description'])) {
 
-if(isset($_POST['titleEdit'])) {
-    try {
-        $blog->editRecord($_POST['titleEdit'], $_POST['descriptionEdit'], $_POST['recordId']);
+            //data of record
+            $title = $_POST['title'];
+            $description = $_POST['description'];
+            $author = $_POST['author'];
 
-        echo json_encode(['success' => 'success']);
-    } catch (Exception $e) {
-        echo json_encode(['error'=>$e->getMessage()]);
+            //check on exist link
+            if (preg_match ("/href|url|http|www|.ru|.com|.net|.info|.org/i", $title)) {
+                throw new Exception('Обнаружена ссылка');
+            }
+
+            $blog->insertRecord($title, $description, $dateBlog, $author);
     }
-}
 
-if (isset($_POST['exit'])) {
-    try {
-        unset($_SESSION['user']);
-
-        echo json_encode(['success' => 'success']);
-    } catch (Exception $e) {
-        echo json_encode(['error'=>$e->getMessage()]);
+    if(isset($_POST['titleEdit'])) {
+            $blog->editRecord($_POST['titleEdit'], $_POST['descriptionEdit'], $_POST['recordId']);
     }
+
+    if (isset($_POST['exit'])) {
+            unset($_SESSION['user']);
+    }
+
+    echo json_encode(['success' => 'success', 'dateBlog' => $dateBlog]);
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
